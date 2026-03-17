@@ -2,73 +2,93 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>FIFA Mini</title>
+<title>FIFA Mini Pro</title>
 
 <style>
 body {
     text-align: center;
-    background: linear-gradient(#4CAF50, #2e7d32);
+    background: linear-gradient(#4CAF50, #1b5e20);
     font-family: Arial;
     color: white;
 }
 
 #game {
     position: relative;
-    width: 500px;
-    height: 350px;
+    width: 600px;
+    height: 400px;
     margin: auto;
+    background: url('https://i.imgur.com/3e5p6.jpg') center/cover;
     border: 4px solid white;
-    background: #388e3c;
     overflow: hidden;
 }
 
+/* Khung thành */
 #goal {
     position: absolute;
-    top: 20px;
-    left: 100px;
+    top: 30px;
+    left: 150px;
     width: 300px;
-    height: 120px;
+    height: 140px;
     border: 4px solid white;
+    background: rgba(255,255,255,0.1);
 }
 
+/* Thủ môn */
 #keeper {
     position: absolute;
     top: 60px;
-    left: 200px;
-    width: 70px;
-    height: 70px;
-    background: black;
-    border-radius: 50%;
+    left: 260px;
+    width: 80px;
     transition: 0.2s;
 }
 
-#player {
-    position: absolute;
-    bottom: 20px;
-    left: 220px;
-    width: 60px;
-    height: 60px;
-    background: blue;
-    border-radius: 50%;
+#keeper img {
+    width: 100%;
 }
 
+/* Cầu thủ */
+#player {
+    position: absolute;
+    bottom: 10px;
+    left: 260px;
+    width: 80px;
+}
+
+#player img {
+    width: 100%;
+}
+
+/* Bóng */
 #ball {
     position: absolute;
-    bottom: 50px;
-    left: 240px;
+    bottom: 60px;
+    left: 285px;
     width: 25px;
-    height: 25px;
-    background: white;
-    border-radius: 50%;
-    transition: 0.4s;
+    transition: 0.4s ease-out;
+}
+
+/* Tên */
+.name {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+}
+
+#playerName {
+    bottom: 0;
+}
+
+#keeperName {
+    top: 0;
 }
 
 button {
     padding: 10px 15px;
     margin: 5px;
     font-size: 16px;
-    border: none;
     border-radius: 8px;
+    border: none;
     cursor: pointer;
 }
 
@@ -82,13 +102,26 @@ button {
 
 <body>
 
-<h2>⚽ FIFA MINI</h2>
+<h2>⚽ FIFA MINI PRO</h2>
 
 <div id="game">
+
     <div id="goal"></div>
-    <div id="keeper"></div>
-    <div id="player"></div>
-    <div id="ball"></div>
+
+    <div id="keeper">
+        <img src="https://i.imgur.com/4LGAZ8t.png">
+    </div>
+
+    <div class="name" id="keeperName">Khê 🧤</div>
+
+    <div id="player">
+        <img src="https://i.imgur.com/Q9bZ6.png">
+    </div>
+
+    <div class="name" id="playerName">Huy ⚽</div>
+
+    <img id="ball" src="https://i.imgur.com/Wb1qfhK.png">
+
 </div>
 
 <div>
@@ -108,43 +141,42 @@ let speed = 2;
 
 const keeper = document.getElementById("keeper");
 
-// Thủ môn di chuyển liên tục
-let direction = 1;
+// Thủ môn di chuyển
+let dir = 1;
 setInterval(() => {
-    let left = keeper.offsetLeft;
+    let x = keeper.offsetLeft;
 
-    if (left <= 120) direction = 1;
-    if (left >= 300) direction = -1;
+    if (x <= 180) dir = 1;
+    if (x >= 380) dir = -1;
 
-    keeper.style.left = (left + direction * speed) + "px";
-}, 50);
+    keeper.style.left = (x + dir * speed) + "px";
+}, 40);
 
 // Sút bóng
-function shoot(dir) {
+function shoot(direction) {
     const ball = document.getElementById("ball");
 
     let targetX;
 
-    if (dir === "left") targetX = 120;
-    if (dir === "center") targetX = 240;
-    if (dir === "right") targetX = 340;
+    if (direction === "left") targetX = 180;
+    if (direction === "center") targetX = 290;
+    if (direction === "right") targetX = 380;
 
     ball.style.left = targetX + "px";
-    ball.style.bottom = "250px";
+    ball.style.bottom = "280px";
 
     setTimeout(() => {
         let keeperX = keeper.offsetLeft;
 
-        // kiểm tra cản phá
-        if (Math.abs(keeperX - targetX) < 50) {
-            alert("❌ Bị cản!");
+        if (Math.abs(keeperX - targetX) < 60) {
+            alert("❌ Khê đã cản phá!");
         } else {
-            alert("⚽ Ghi bàn!");
+            alert("⚽ Huy ghi bàn!");
             score++;
-            
+
             if (score % 3 === 0) {
                 level++;
-                speed += 0.5; // tăng độ khó
+                speed += 0.7;
             }
         }
 
@@ -152,8 +184,8 @@ function shoot(dir) {
             "Level: " + level + " | Score: " + score;
 
         // reset
-        ball.style.bottom = "50px";
-        ball.style.left = "240px";
+        ball.style.bottom = "60px";
+        ball.style.left = "285px";
 
     }, 400);
 }

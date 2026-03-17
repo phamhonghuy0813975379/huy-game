@@ -1,195 +1,56 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<title>FIFA Mini Pro</title>
-
-<style>
-body {
-    text-align: center;
-    background: linear-gradient(#4CAF50, #1b5e20);
-    font-family: Arial;
-    color: white;
-}
-
-#game {
-    position: relative;
-    width: 600px;
-    height: 400px;
-    margin: auto;
-    background: url('https://i.imgur.com/3e5p6.jpg') center/cover;
-    border: 4px solid white;
-    overflow: hidden;
-}
-
-/* Khung thành */
-#goal {
-    position: absolute;
-    top: 30px;
-    left: 150px;
-    width: 300px;
-    height: 140px;
-    border: 4px solid white;
-    background: rgba(255,255,255,0.1);
-}
-
-/* Thủ môn */
-#keeper {
-    position: absolute;
-    top: 60px;
-    left: 260px;
-    width: 80px;
-    transition: 0.2s;
-}
-
-#keeper img {
-    width: 100%;
-}
-
-/* Cầu thủ */
-#player {
-    position: absolute;
-    bottom: 10px;
-    left: 260px;
-    width: 80px;
-}
-
-#player img {
-    width: 100%;
-}
-
-/* Bóng */
-#ball {
-    position: absolute;
-    bottom: 60px;
-    left: 285px;
-    width: 25px;
-    transition: 0.4s ease-out;
-}
-
-/* Tên */
-.name {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    font-weight: bold;
-}
-
-#playerName {
-    bottom: 0;
-}
-
-#keeperName {
-    top: 0;
-}
-
-button {
-    padding: 10px 15px;
-    margin: 5px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-}
-
-#info {
-    margin-top: 10px;
-    font-size: 18px;
-}
-</style>
-
-</head>
-
-<body>
-
-<h2>⚽ FIFA MINI PRO</h2>
-
-<div id="game">
-
-    <div id="goal"></div>
-
-    <div id="keeper">
-        <img src="https://i.imgur.com/4LGAZ8t.png">
-    </div>
-
-    <div class="name" id="keeperName">Khê 🧤</div>
-
-    <div id="player">
-        <img src="https://i.imgur.com/Q9bZ6.png">
-    </div>
-
-    <div class="name" id="playerName">Huy ⚽</div>
-
-    <img id="ball" src="https://i.imgur.com/Wb1qfhK.png">
-
-</div>
-
-<div>
-    <button onclick="shoot('left')">⬅ Trái</button>
-    <button onclick="shoot('center')">⬆ Giữa</button>
-    <button onclick="shoot('right')">➡ Phải</button>
-</div>
-
-<div id="info">
-    Level: 1 | Score: 0
-</div>
-
 <script>
 let level = 1;
 let score = 0;
-let speed = 2;
 
 const keeper = document.getElementById("keeper");
-
-// Thủ môn di chuyển
-let dir = 1;
-setInterval(() => {
-    let x = keeper.offsetLeft;
-
-    if (x <= 180) dir = 1;
-    if (x >= 380) dir = -1;
-
-    keeper.style.left = (x + dir * speed) + "px";
-}, 40);
 
 // Sút bóng
 function shoot(direction) {
     const ball = document.getElementById("ball");
 
     let targetX;
-
     if (direction === "left") targetX = 180;
     if (direction === "center") targetX = 290;
     if (direction === "right") targetX = 380;
 
+    // Thủ môn chọn hướng ngẫu nhiên
+    const directions = ["left", "center", "right"];
+    const keeperChoice = directions[Math.floor(Math.random() * 3)];
+
+    let keeperTarget;
+    if (keeperChoice === "left") keeperTarget = 180;
+    if (keeperChoice === "center") keeperTarget = 290;
+    if (keeperChoice === "right") keeperTarget = 380;
+
+    // Animation thủ môn lao
+    keeper.style.transition = "0.3s";
+    keeper.style.left = keeperTarget + "px";
+
+    // Bóng bay
     ball.style.left = targetX + "px";
     ball.style.bottom = "280px";
 
     setTimeout(() => {
-        let keeperX = keeper.offsetLeft;
 
-        if (Math.abs(keeperX - targetX) < 60) {
-            alert("❌ Khê đã cản phá!");
+        if (direction === keeperChoice) {
+            alert("🧤 Khê đoán đúng và bắt được!");
         } else {
             alert("⚽ Huy ghi bàn!");
             score++;
 
             if (score % 3 === 0) {
                 level++;
-                speed += 0.7;
             }
         }
 
         document.getElementById("info").innerText =
             "Level: " + level + " | Score: " + score;
 
-        // reset
+        // reset vị trí
         ball.style.bottom = "60px";
         ball.style.left = "285px";
+        keeper.style.left = "260px";
 
     }, 400);
 }
 </script>
-
-</body>
-</html>

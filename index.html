@@ -1,102 +1,122 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-    <title>⚽ Penalty Game</title>
+<meta charset="UTF-8">
+<title>Game Đá Banh</title>
+<style>
+    body {
+        text-align: center;
+        font-family: Arial;
+        background: #4CAF50;
+        color: white;
+    }
 
-    <style>
-        body {
-            text-align: center;
-            font-family: Arial;
-        }
+    #game {
+        position: relative;
+        width: 400px;
+        height: 300px;
+        margin: auto;
+        background: #2e7d32;
+        border: 3px solid white;
+    }
 
-        #goal {
-            width: 300px;
-            height: 150px;
-            border: 5px solid black;
-            margin: 20px auto;
-            position: relative;
-            background: lightgreen;
-        }
+    #goal {
+        position: absolute;
+        top: 20px;
+        left: 50px;
+        width: 300px;
+        height: 100px;
+        border: 3px solid white;
+    }
 
-        #keeper {
-            position: absolute;
-            bottom: 0;
-            left: 120px;
-            font-size: 40px;
-            transition: 0.3s;
-        }
+    #goalkeeper {
+        position: absolute;
+        top: 60px;
+        left: 150px;
+        width: 60px;
+        height: 60px;
+        background: black;
+        border-radius: 50%;
+    }
 
-        #ball {
-            position: absolute;
-            bottom: -30px;
-            left: 130px;
-            font-size: 30px;
-            transition: 0.5s;
-        }
+    #ball {
+        position: absolute;
+        bottom: 20px;
+        left: 180px;
+        width: 30px;
+        height: 30px;
+        background: white;
+        border-radius: 50%;
+    }
 
-        button {
-            padding: 10px 20px;
-            margin: 10px;
-        }
-    </style>
+    button {
+        margin: 5px;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    #level {
+        margin-top: 10px;
+        font-size: 20px;
+    }
+</style>
 </head>
 
 <body>
 
-<h1>⚽ Penalty Game</h1>
-<h2>Điểm: <span id="score">0</span></h2>
+<h2>⚽ Game Đá Banh</h2>
 
-<div id="goal">
-    <div id="keeper">🧤</div>
-    <div id="ball">⚽</div>
+<div id="game">
+    <div id="goal"></div>
+    <div id="goalkeeper"></div>
+    <div id="ball"></div>
 </div>
 
-<p>Chọn hướng sút:</p>
+<div>
+    <button onclick="shoot('left')">Sút Trái</button>
+    <button onclick="shoot('center')">Sút Giữa</button>
+    <button onclick="shoot('right')">Sút Phải</button>
+</div>
 
-<button onclick="shoot('left')">👈 Trái</button>
-<button onclick="shoot('center')">👆 Giữa</button>
-<button onclick="shoot('right')">👉 Phải</button>
-
-<h3 id="result"></h3>
+<div id="level">Level: 1</div>
 
 <script>
-let score = 0;
+let level = 1;
 
 function shoot(direction) {
+    const ball = document.getElementById("ball");
+    const keeper = document.getElementById("goalkeeper");
 
-    let directions = ['left','center','right'];
-    let keeper = directions[Math.floor(Math.random() * 3)];
+    // Random hướng thủ môn
+    const directions = ["left", "center", "right"];
+    const keeperMove = directions[Math.floor(Math.random() * 3)];
 
-    let ball = document.getElementById("ball");
-    let keeperDiv = document.getElementById("keeper");
+    // Di chuyển thủ môn
+    if (keeperMove === "left") keeper.style.left = "80px";
+    if (keeperMove === "center") keeper.style.left = "150px";
+    if (keeperMove === "right") keeper.style.left = "220px";
 
-    // reset vị trí
-    ball.style.left = "130px";
-    keeperDiv.style.left = "120px";
+    // Di chuyển bóng
+    if (direction === "left") ball.style.left = "80px";
+    if (direction === "center") ball.style.left = "180px";
+    if (direction === "right") ball.style.left = "280px";
 
-    // di chuyển bóng
-    if(direction === "left") ball.style.left = "20px";
-    if(direction === "center") ball.style.left = "130px";
-    if(direction === "right") ball.style.left = "240px";
-
-    // di chuyển thủ môn
-    if(keeper === "left") keeperDiv.style.left = "20px";
-    if(keeper === "center") keeperDiv.style.left = "120px";
-    if(keeper === "right") keeperDiv.style.left = "220px";
+    ball.style.bottom = "200px";
 
     setTimeout(() => {
-        if(direction === keeper){
-            document.getElementById("result").innerText =
-            "❌ Bị cản!";
-            score = 0;
+        if (direction !== keeperMove) {
+            alert("⚽ Ghi bàn!");
+            level++;
         } else {
-            score++;
-            document.getElementById("result").innerText =
-            "⚽ GOAL!!!";
+            alert("❌ Bị cản phá!");
         }
 
-        document.getElementById("score").innerText = score;
+        document.getElementById("level").innerText = "Level: " + level;
 
+        // Reset vị trí
+        ball.style.bottom = "20px";
+        ball.style.left = "180px";
+        keeper.style.left = "150px";
     }, 500);
 }
 </script>

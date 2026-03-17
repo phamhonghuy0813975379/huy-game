@@ -1,55 +1,105 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>⚽ Game Penalty</title>
+    <title>⚽ Penalty Game</title>
+
     <style>
         body {
             text-align: center;
             font-family: Arial;
         }
+
+        #goal {
+            width: 300px;
+            height: 150px;
+            border: 5px solid black;
+            margin: 20px auto;
+            position: relative;
+            background: lightgreen;
+        }
+
+        #keeper {
+            position: absolute;
+            bottom: 0;
+            left: 120px;
+            font-size: 40px;
+            transition: 0.3s;
+        }
+
+        #ball {
+            position: absolute;
+            bottom: -30px;
+            left: 130px;
+            font-size: 30px;
+            transition: 0.5s;
+        }
+
         button {
-            padding: 15px;
+            padding: 10px 20px;
             margin: 10px;
-            font-size: 16px;
         }
     </style>
 </head>
 
 <body>
 
-    <h1>⚽ Penalty Game</h1>
-    <h2>Điểm: <span id="score">0</span></h2>
+<h1>⚽ Penalty Game</h1>
+<h2>Điểm: <span id="score">0</span></h2>
 
-    <p>Chọn hướng sút:</p>
+<div id="goal">
+    <div id="keeper">🧤</div>
+    <div id="ball">⚽</div>
+</div>
 
-    <button onclick="shoot('trai')">👈 Trái</button>
-    <button onclick="shoot('giua')">👆 Giữa</button>
-    <button onclick="shoot('phai')">👉 Phải</button>
+<p>Chọn hướng sút:</p>
 
-    <h3 id="result"></h3>
+<button onclick="shoot('left')">👈 Trái</button>
+<button onclick="shoot('center')">👆 Giữa</button>
+<button onclick="shoot('right')">👉 Phải</button>
 
-    <script>
-        let score = 0;
+<h3 id="result"></h3>
 
-        function shoot(playerChoice) {
+<script>
+let score = 0;
 
-            let directions = ['trai', 'giua', 'phai'];
-            let keeper = directions[Math.floor(Math.random() * 3)];
+function shoot(direction) {
 
-            if (playerChoice === keeper) {
-                document.getElementById("result").innerText =
-                    "❌ Bị cản! Thủ môn bắt: " + keeper + " → Game Over!";
-                
-                score = 0;
-            } else {
-                score++;
-                document.getElementById("result").innerText =
-                    "⚽ Ghi bàn! Thủ môn bắt: " + keeper;
-            }
+    let directions = ['left','center','right'];
+    let keeper = directions[Math.floor(Math.random() * 3)];
 
-            document.getElementById("score").innerText = score;
+    let ball = document.getElementById("ball");
+    let keeperDiv = document.getElementById("keeper");
+
+    // reset vị trí
+    ball.style.left = "130px";
+    keeperDiv.style.left = "120px";
+
+    // di chuyển bóng
+    if(direction === "left") ball.style.left = "20px";
+    if(direction === "center") ball.style.left = "130px";
+    if(direction === "right") ball.style.left = "240px";
+
+    // di chuyển thủ môn
+    if(keeper === "left") keeperDiv.style.left = "20px";
+    if(keeper === "center") keeperDiv.style.left = "120px";
+    if(keeper === "right") keeperDiv.style.left = "220px";
+
+    setTimeout(() => {
+        if(direction === keeper){
+            document.getElementById("result").innerText =
+            "❌ Bị cản!";
+            score = 0;
+        } else {
+            score++;
+            document.getElementById("result").innerText =
+            "⚽ GOAL!!!";
         }
-    </script>
+
+        document.getElementById("score").innerText = score;
+
+    }, 500);
+}
+</script>
 
 </body>
 </html>

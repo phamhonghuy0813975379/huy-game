@@ -1,56 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>FIFA Mini Fix</title>
+
+<style>
+body {
+    text-align: center;
+    background: green;
+    color: white;
+    font-family: Arial;
+}
+
+#game {
+    position: relative;
+    width: 500px;
+    height: 350px;
+    margin: auto;
+    background: #2e7d32;
+    border: 3px solid white;
+}
+
+#goal {
+    position: absolute;
+    top: 20px;
+    left: 100px;
+    width: 300px;
+    height: 120px;
+    border: 3px solid white;
+}
+
+#keeper {
+    position: absolute;
+    top: 60px;
+    left: 220px;
+    width: 60px;
+    height: 60px;
+    background: black;
+    border-radius: 50%;
+}
+
+#player {
+    position: absolute;
+    bottom: 20px;
+    left: 220px;
+    width: 60px;
+    height: 60px;
+    background: blue;
+    border-radius: 50%;
+}
+
+#ball {
+    position: absolute;
+    bottom: 60px;
+    left: 240px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+button {
+    margin: 5px;
+    padding: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>⚽ FIFA MINI (FIX)</h2>
+
+<div id="game">
+    <div id="goal"></div>
+    <div id="keeper"></div>
+    <div id="player"></div>
+    <div id="ball"></div>
+</div>
+
+<div>
+    <button onclick="shoot('left')">Trái</button>
+    <button onclick="shoot('center')">Giữa</button>
+    <button onclick="shoot('right')">Phải</button>
+</div>
+
+<p id="info">Level: 1 | Score: 0</p>
+
 <script>
 let level = 1;
 let score = 0;
 
-const keeper = document.getElementById("keeper");
-
-// Sút bóng
 function shoot(direction) {
     const ball = document.getElementById("ball");
+    const keeper = document.getElementById("keeper");
 
     let targetX;
-    if (direction === "left") targetX = 180;
-    if (direction === "center") targetX = 290;
-    if (direction === "right") targetX = 380;
+    if (direction === "left") targetX = 120;
+    if (direction === "center") targetX = 240;
+    if (direction === "right") targetX = 340;
 
-    // Thủ môn chọn hướng ngẫu nhiên
-    const directions = ["left", "center", "right"];
-    const keeperChoice = directions[Math.floor(Math.random() * 3)];
+    // Thủ môn random
+    const dirs = ["left","center","right"];
+    const keeperChoice = dirs[Math.floor(Math.random()*3)];
 
-    let keeperTarget;
-    if (keeperChoice === "left") keeperTarget = 180;
-    if (keeperChoice === "center") keeperTarget = 290;
-    if (keeperChoice === "right") keeperTarget = 380;
+    let keeperX;
+    if (keeperChoice === "left") keeperX = 120;
+    if (keeperChoice === "center") keeperX = 240;
+    if (keeperChoice === "right") keeperX = 340;
 
-    // Animation thủ môn lao
-    keeper.style.transition = "0.3s";
-    keeper.style.left = keeperTarget + "px";
+    keeper.style.left = keeperX + "px";
 
-    // Bóng bay
+    // bóng bay
     ball.style.left = targetX + "px";
-    ball.style.bottom = "280px";
+    ball.style.bottom = "250px";
 
     setTimeout(() => {
-
         if (direction === keeperChoice) {
-            alert("🧤 Khê đoán đúng và bắt được!");
+            alert("❌ Bị Khê bắt!");
         } else {
             alert("⚽ Huy ghi bàn!");
             score++;
 
-            if (score % 3 === 0) {
-                level++;
-            }
+            if (score % 3 === 0) level++;
         }
 
         document.getElementById("info").innerText =
             "Level: " + level + " | Score: " + score;
 
-        // reset vị trí
+        // reset
+        ball.style.left = "240px";
         ball.style.bottom = "60px";
-        ball.style.left = "285px";
-        keeper.style.left = "260px";
+        keeper.style.left = "220px";
 
-    }, 400);
+    }, 300);
 }
 </script>
+
+</body>
+</html>

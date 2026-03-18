@@ -2,13 +2,13 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Casino Dice Game</title>
+<title>Tài Xỉu Casino</title>
 
 <style>
 body {
     text-align: center;
-    background: #111;
-    color: #fff;
+    background: #0b1d2a;
+    color: white;
     font-family: Arial;
 }
 
@@ -19,66 +19,81 @@ button {
     cursor: pointer;
 }
 
-#dice {
-    font-size: 40px;
-    margin: 20px;
-    transition: 0.2s;
-}
-
 .selected {
     background: gold;
     color: black;
+}
+
+#dice {
+    font-size: 40px;
+    margin: 20px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🎰 Casino Xúc Xắc</h2>
+<h2>🎰 Tài Xỉu Casino</h2>
 
 <h3 id="money">💰 Coins: 100</h3>
 
-<div id="buttons"></div>
+<h3>Chọn cược:</h3>
+<div id="bets">
+    <button onclick="selectBet('tai')">Tài</button>
+    <button onclick="selectBet('xiu')">Xỉu</button>
+    <button onclick="selectBet('chan')">Chẵn</button>
+    <button onclick="selectBet('le')">Lẻ</button>
+</div>
+
+<h3>Hoặc chọn số (3 → 18):</h3>
+<div id="numbers"></div>
 
 <br>
-<input type="number" id="bet" placeholder="Nhập tiền cược" min="1">
-<br><br>
+<input type="number" id="bet" placeholder="Nhập tiền cược">
 
-<button onclick="rollDice()">🎲 Lắc xúc xắc</button>
+<br><br>
+<button onclick="rollDice()">🎲 Lắc</button>
 
 <h2 id="dice">🎲 🎲 🎲</h2>
-<p id="result">Chọn số & cược đi!</p>
+<p id="result">Chọn cược!</p>
 
 <script>
-let selectedNumber = null;
 let coins = 100;
+let selectedBet = null;
 
-// tạo nút 4 → 17
-const container = document.getElementById("buttons");
-
-for (let i = 4; i <= 17; i++) {
+// tạo số 3 → 18
+const numDiv = document.getElementById("numbers");
+for (let i = 3; i <= 18; i++) {
     let btn = document.createElement("button");
     btn.innerText = i;
 
     btn.onclick = () => {
-        selectedNumber = i;
-
-        // highlight nút
-        document.querySelectorAll("button").forEach(b => b.classList.remove("selected"));
-        btn.classList.add("selected");
+        selectedBet = i;
+        highlight(btn);
     };
 
-    container.appendChild(btn);
+    numDiv.appendChild(btn);
 }
 
-// 🎲 animation lắc
-function animateDice(callback) {
-    let count = 0;
+// chọn tài xỉu
+function selectBet(type) {
+    selectedBet = type;
+    highlight(event.target);
+}
 
+// highlight nút
+function highlight(btn) {
+    document.querySelectorAll("button").forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
+}
+
+// 🎲 animation
+function animate(callback) {
+    let count = 0;
     let interval = setInterval(() => {
-        let r1 = Math.floor(Math.random()*6)+1;
-        let r2 = Math.floor(Math.random()*6)+1;
-        let r3 = Math.floor(Math.random()*6)+1;
+        let r1 = rand();
+        let r2 = rand();
+        let r3 = rand();
 
         document.getElementById("dice").innerText =
             `🎲 ${r1} 🎲 ${r2} 🎲 ${r3}`;
@@ -91,51 +106,70 @@ function animateDice(callback) {
     }, 100);
 }
 
+function rand() {
+    return Math.floor(Math.random()*6)+1;
+}
+
 // 🎯 chơi
 function rollDice() {
     let bet = parseInt(document.getElementById("bet").value);
 
-    if (!selectedNumber) {
-        alert("Chọn số!");
-        return;
-    }
+    if (!selectedBet) return alert("Chọn cược!");
+    if (!bet || bet <= 0) return alert("Nhập tiền!");
+    if (bet > coins) return alert("Không đủ tiền!");
 
-    if (!bet || bet <= 0) {
-        alert("Nhập tiền cược!");
-        return;
-    }
-
-    if (bet > coins) {
-        alert("Không đủ tiền!");
-        return;
-    }
-
-    animateDice(() => {
-
-        let d1 = Math.floor(Math.random()*6)+1;
-        let d2 = Math.floor(Math.random()*6)+1;
-        let d3 = Math.floor(Math.random()*6)+1;
-
+    animate(() => {
+        let d1 = rand(), d2 = rand(), d3 = rand();
         let total = d1 + d2 + d3;
 
         document.getElementById("dice").innerText =
             `🎲 ${d1} 🎲 ${d2} 🎲 ${d3} (Tổng: ${total})`;
 
-        // 🎯 thưởng theo độ hiếm
-        let rewardMultiplier = 2;
+        let win = false;
+        let reward = 0;
 
-        if (total <= 6 || total >= 15) rewardMultiplier = 4; // hiếm
-        if (total === 3 || total === 18) rewardMultiplier = 10; // cực hiếm
+        // 🎯 kiểm tra
+        if (selectedBet === "tai" && total >= 11 && total <= 17) {
+            win = true;
+            reward = bet * 2;
+        }
 
-        if (total === selectedNumber) {
-            let win = bet * rewardMultiplier;
-            coins += win;
+        if (selectedBet === "xiu" && total >= 4 && total <= 10) {
+            win = true;
+            reward = bet * 2;
+        }
+
+        if (selectedBet === "chan" && total % 2 === 0) {
+            win = true;
+            reward = bet * 2;
+        }
+
+        if (selectedBet === "le" && total % 2 !== 0) {
+            win = true;
+            reward = bet * 2;
+        }
+
+        // 🎯 đoán số
+        if (typeof selectedBet === "number") {
+            if (total === selectedBet) {
+                win = true;
+
+                // thưởng theo độ hiếm
+                if (total === 3 || total === 18) reward = bet * 10;
+                else if (total <= 6 || total >= 15) reward = bet * 5;
+                else reward = bet * 3;
+            }
+        }
+
+        // 💰 kết quả
+        if (win) {
+            coins += reward;
             document.getElementById("result").innerText =
-                `🎉 Trúng! +${win} coins`;
+                `🎉 Thắng! +${reward}`;
         } else {
             coins -= bet;
             document.getElementById("result").innerText =
-                `❌ Thua! -${bet} coins`;
+                `❌ Thua! -${bet}`;
         }
 
         document.getElementById("money").innerText =
@@ -143,10 +177,9 @@ function rollDice() {
 
         // 💀 game over
         if (coins <= 0) {
-            alert("💀 Hết tiền rồi!");
+            alert("💀 Hết tiền!");
             coins = 100;
         }
-
     });
 }
 </script>

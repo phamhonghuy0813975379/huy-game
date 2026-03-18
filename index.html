@@ -2,138 +2,83 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>FIFA Mini Fix</title>
+<title>Game Xúc Xắc</title>
 
 <style>
 body {
     text-align: center;
-    background: green;
-    color: white;
     font-family: Arial;
-}
-
-#game {
-    position: relative;
-    width: 500px;
-    height: 350px;
-    margin: auto;
-    background: #2e7d32;
-    border: 3px solid white;
-}
-
-#goal {
-    position: absolute;
-    top: 20px;
-    left: 100px;
-    width: 300px;
-    height: 120px;
-    border: 3px solid white;
-}
-
-#keeper {
-    position: absolute;
-    top: 60px;
-    left: 220px;
-    width: 60px;
-    height: 60px;
-    background: black;
-    border-radius: 50%;
-}
-
-#player {
-    position: absolute;
-    bottom: 20px;
-    left: 220px;
-    width: 60px;
-    height: 60px;
-    background: blue;
-    border-radius: 50%;
-}
-
-#ball {
-    position: absolute;
-    bottom: 60px;
-    left: 240px;
-    width: 20px;
-    height: 20px;
-    background: white;
-    border-radius: 50%;
-    transition: 0.3s;
+    background: #222;
+    color: white;
 }
 
 button {
     margin: 5px;
     padding: 10px;
+    font-size: 16px;
+}
+
+#dice {
+    font-size: 30px;
+    margin: 20px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>⚽ FIFA MINI (FIX)</h2>
+<h2>🎲 Game Đoán Tổng Xúc Xắc</h2>
 
-<div id="game">
-    <div id="goal"></div>
-    <div id="keeper"></div>
-    <div id="player"></div>
-    <div id="ball"></div>
-</div>
+<div id="buttons"></div>
 
-<div>
-    <button onclick="shoot('left')">Trái</button>
-    <button onclick="shoot('center')">Giữa</button>
-    <button onclick="shoot('right')">Phải</button>
-</div>
+<br>
+<button onclick="rollDice()">🎯 Tung xúc xắc</button>
 
-<p id="info">Level: 1 | Score: 0</p>
+<h3 id="dice">🎲 🎲 🎲</h3>
+<p id="result">Chọn số trước!</p>
+<p id="score">Score: 0</p>
 
 <script>
-let level = 1;
+let selectedNumber = null;
 let score = 0;
 
-function shoot(direction) {
-    const ball = document.getElementById("ball");
-    const keeper = document.getElementById("keeper");
+// tạo nút từ 4 → 17
+const container = document.getElementById("buttons");
+for (let i = 4; i <= 17; i++) {
+    let btn = document.createElement("button");
+    btn.innerText = i;
+    btn.onclick = () => {
+        selectedNumber = i;
+        document.getElementById("result").innerText = "Bạn chọn: " + i;
+    };
+    container.appendChild(btn);
+}
 
-    let targetX;
-    if (direction === "left") targetX = 120;
-    if (direction === "center") targetX = 240;
-    if (direction === "right") targetX = 340;
+// tung xúc xắc
+function rollDice() {
+    if (selectedNumber === null) {
+        alert("Chọn số trước!");
+        return;
+    }
 
-    // Thủ môn random
-    const dirs = ["left","center","right"];
-    const keeperChoice = dirs[Math.floor(Math.random()*3)];
+    let d1 = Math.floor(Math.random() * 6) + 1;
+    let d2 = Math.floor(Math.random() * 6) + 1;
+    let d3 = Math.floor(Math.random() * 6) + 1;
 
-    let keeperX;
-    if (keeperChoice === "left") keeperX = 120;
-    if (keeperChoice === "center") keeperX = 240;
-    if (keeperChoice === "right") keeperX = 340;
+    let total = d1 + d2 + d3;
 
-    keeper.style.left = keeperX + "px";
+    document.getElementById("dice").innerText =
+        `🎲 ${d1} - 🎲 ${d2} - 🎲 ${d3} (Tổng: ${total})`;
 
-    // bóng bay
-    ball.style.left = targetX + "px";
-    ball.style.bottom = "250px";
+    if (total === selectedNumber) {
+        score += 5;
+        document.getElementById("result").innerText = "🎉 Đúng! +5 điểm";
+    } else {
+        score -= 2;
+        document.getElementById("result").innerText = "❌ Sai! -2 điểm";
+    }
 
-    setTimeout(() => {
-        if (direction === keeperChoice) {
-            alert("❌ Bị Khê bắt!");
-        } else {
-            alert("⚽ Huy ghi bàn!");
-            score++;
-
-            if (score % 3 === 0) level++;
-        }
-
-        document.getElementById("info").innerText =
-            "Level: " + level + " | Score: " + score;
-
-        // reset
-        ball.style.left = "240px";
-        ball.style.bottom = "60px";
-        keeper.style.left = "220px";
-
-    }, 300);
+    document.getElementById("score").innerText = "Score: " + score;
 }
 </script>
 

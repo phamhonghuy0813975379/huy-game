@@ -1,12 +1,70 @@
-print("=== CHƯƠNG TRÌNH XIN BA MUA LAPTOP ===")
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Game Hack Não</title>
+<style>
+    body {
+        font-family: Arial;
+        text-align: center;
+        background: #111;
+        color: white;
+    }
+    input, button {
+        padding: 10px;
+        font-size: 16px;
+        margin: 10px;
+    }
+    #log {
+        margin-top: 20px;
+        height: 200px;
+        overflow-y: auto;
+        border: 1px solid white;
+        padding: 10px;
+    }
+</style>
+</head>
+<body>
 
-cau1 = input("1. ba ơi mua macbook cho con nha ba. (có/không): ")
-cau2 = input("2. Laptop giúp con học tốt hơn á ba  (mua/không): ")
-cau3 = input("3. Con hứa dùng laptop đúng mục đích học tập. (ok con/không): ")
-cau4 = input("4. Con tiết kiệm và giữ gìn cẩn thận  (ok/không): ")
-cau5 = input("5. con yêu ba phạm hồng phát? (ôk/không): ")
+<h1>🧠 Game Đoán Số Hack Não</h1>
+<p>Máy có thể nói dối 1 lần 😈</p>
 
-if (cau1 == "có" and cau2 == "mua" and cau3 == "ok con" and cau4 == "ok" and cau5 == "ôk"):
-    print("=> Kết quả: Ba nên mua laptop cho con! ❤️")
-else:
-    print("=> Kết quả: i love u!")
+<input type="number" id="guess" placeholder="Nhập số..." />
+<button onclick="check()">Đoán</button>
+
+<div id="log"></div>
+
+<script>
+let number = Math.floor(Math.random() * 100) + 1;
+let lied = false;
+
+function log(text) {
+    let div = document.getElementById("log");
+    div.innerHTML += "<p>" + text + "</p>";
+    div.scrollTop = div.scrollHeight;
+}
+
+function check() {
+    let guess = Number(document.getElementById("guess").value);
+
+    if (!guess) return;
+
+    let result;
+
+    if (!lied && Math.random() < 0.3) {
+        lied = true;
+        result = guess > number ? "Số cần tìm lớn hơn!" : "Số cần tìm nhỏ hơn!";
+    } else {
+        if (guess == number) {
+            log("🎉 Bạn thắng! Số đúng là " + number);
+            return;
+        }
+        result = guess > number ? "Số cần tìm nhỏ hơn!" : "Số cần tìm lớn hơn!";
+    }
+
+    log("Bạn đoán: " + guess + " → " + result);
+}
+</script>
+
+</body>
+</html>
